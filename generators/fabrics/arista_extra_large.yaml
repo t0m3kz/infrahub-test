@@ -1,0 +1,7 @@
+---
+- role: "spine"
+  model: "CCS-720DP-48S-2F"
+  quantity: 4
+- role: "leaf"
+  model: "CCS-720DP-48S-2F"
+  quantity: 48

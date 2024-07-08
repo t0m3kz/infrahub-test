@@ -1,0 +1,23 @@
+---
+interfaces:
+  - name: Ethernet0/
+    from: "0"
+    to: "24"
+    speed: 1000000
+    role:
+      - server
+      - uplink
+  - name: Ethernet0/
+    from: "25"
+    to: "32"
+    speed: 1000000
+    role:
+      - peer
+      - backbone
+  - name: mgmt
+    speed: 100000
+    role: management
+  - name: loopback0
+    role: loopback
+  - name: loopback1
+    role: vtep

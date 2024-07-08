@@ -1,0 +1,7 @@
+---
+- role: "spine"
+  model: "N9K-C9332C"
+  quantity: 2
+- role: "leaf"
+  model: "N9K-C93180YC-FX3"
+  quantity: 8

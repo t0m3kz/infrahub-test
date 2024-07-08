@@ -1,0 +1,121 @@
+# yaml-language-server: $schema=https://schema.infrahub.app/infrahub/schema/latest.json
+---
+version: "1.0"
+generics:
+  - name: Service
+    namespace: Topology
+    description: "Services"
+    default_filter: name__value
+    order_by:
+      - name__value
+    display_labels:
+      - name__value
+    attributes:
+      - name: name
+        kind: Text
+        label: Name
+        optional: false
+        order_weight: 1000
+      - name: description
+        kind: Text
+        order_weight: 1100
+    relationships:
+      - name: topology
+        peer: TopologyTopology
+        cardinality: one
+        kind: Parent
+        optional: false
+nodes:
+  - name: BackBoneService
+    namespace: Topology
+    description: "Backbone Service"
+    label: "Backbone Service"
+    icon: "carbon:container-services"
+    menu_placement: "TopologyService"
+    inherit_from:
+      - TopologyService
+    uniqueness_constraints:
+      - ["circuit_id__value", "internal_circuit_id__value"]
+    attributes:
+      - name: circuit_id
+        kind: Text
+        label: Circuit ID
+        optional: false
+      - name: internal_circuit_id
+        kind: Text
+        label: Internal Circuit ID
+        optional: false
+    relationships:
+      - name: provider
+        cardinality: one
+        peer: OrganizationProvider
+        optional: false
+      - name: site_a
+        label: Site A
+        cardinality: one
+        peer: LocationSite
+        optional: false
+        identifier: infrabackboneservice__location_site_a
+      - name: site_b
+        label: Site B
+        cardinality: one
+        peer: LocationSite
+        optional: false
+        identifier: infrabackboneservice__location_site_b
+  - name: NetworkService
+    namespace: Topology
+    description: "Network services attached to a Topology."
+    label: Network Service
+    inherit_from:
+      - TopologyService
+    menu_placement: "TopologyService"
+    icon: "carbon:ibm-cloud-internet-services"
+    default_filter: name__value
+    order_by:
+      - name__value
+    display_labels:
+      - name__value
+    attributes:
+      - name: service_type
+        kind: Text
+        enum: ["Layer2", "Layer3"]
+        order_weight: 1200
+    relationships:
+      - name: identifier
+        peer: TopologyNetworkServiceIdentifier
+        cardinality: one
+        kind: Attribute
+        optional: false
+      - name: vlan
+        peer: InfraVLAN
+        optional: true
+        cardinality: one
+        kind: Component
+        order_weight: 1500
+      - name: prefix
+        peer: InfraPrefix
+        optional: true
+        cardinality: one
+        kind: Component
+        order_weight: 1400
+  # --------------------  Network Services --------------------
+  - name: NetworkServiceIdentifier
+    namespace: Topology
+    description: "Generic model for different types of identifiers used in network services."
+    label: Network Service Identifier
+    icon: "mdi:identifier"
+    menu_placement: "TopologyService"
+    default_filter: identifier__value
+    order_by:
+      - identifier__value
+    display_labels:
+      - identifier__value
+    attributes:
+      - name: identifier
+        kind: Number
+    relationships:
+      - name: service
+        label: Network Service
+        peer: TopologyNetworkService
+        cardinality: one
+        optional: true

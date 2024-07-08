@@ -1,0 +1,7 @@
+---
+- role: "spine"
+  model: "DCS-7280DR3-24-F"
+  quantity: 2
+- role: "leaf"
+  model: "CCS-720DP-48S-2F"
+  quantity: 16

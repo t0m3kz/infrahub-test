@@ -1,0 +1,23 @@
+---
+interfaces:
+  - name: FasterEthernet0/
+    from: "0"
+    to: "24"
+    speed: "10G"
+    role:
+      - server
+      - leaf
+  - name: GigabitEthernet0/
+    from: "0"
+    to: "4"
+    speed: "100G"
+    role:
+      - peer
+      - uplink
+  - name: mgmt
+    speed: "10G"
+    role: management
+  - name: loopback0
+    role: loopback
+  - name: loopback1
+    role: vtep

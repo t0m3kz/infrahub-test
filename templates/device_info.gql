@@ -1,0 +1,201 @@
+query device_info($device: String!) {
+  InfraDevice(name__value: $device) {
+    edges {
+      node {
+        id
+        name {
+          value
+        }
+        asn {
+          node {
+            asn {
+              value
+            }
+          }
+        }
+        primary_address {
+          node {
+            address {
+              value
+            }
+          }
+        }
+        topology {
+          node {
+            name {
+              value
+            }
+            network_services {
+              edges {
+                node {
+                  ... on TopologyNetworkService {
+                    name {
+                      value
+                    }
+                    service_type {
+                      value
+                    }
+                    vlan {
+                      node {
+                        name {
+                          value
+                        }
+                        role {
+                          value
+                        }
+                        vlan_id {
+                          value
+                        }
+                      }
+                    }
+                    prefix {
+                      node {
+                        role {
+                          value
+                        }
+                        prefix {
+                          value
+                        }
+                        vrf {
+                          node {
+                            ... on InfraVRF {
+                              vrf_rd {
+                                value
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        location {
+          node {
+            id
+            name {
+              value
+            }
+            timezone {
+              value
+            }
+            ... on LocationSite {
+              ancestors {
+                edges {
+                  node {
+                    network_management_servers {
+                      edges {
+                        node {
+                          __typename
+                          name {
+                            value
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        interfaces {
+          edges {
+            node {
+              __typename
+              id
+              name {
+                value
+              }
+              description {
+                value
+              }
+              enabled {
+                value
+              }
+              role {
+                value
+              }
+              mtu {
+                value
+              }
+              ... on InfraInterfaceL2 {
+                tagged_vlan {
+                  edges {
+                    node {
+                      vlan_id {
+                        value
+                      }
+                      name {
+                        value
+                      }
+                    }
+                  }
+                }
+                untagged_vlan {
+                  node {
+                    vlan_id {
+                      value
+                    }
+                    name {
+                      value
+                    }
+                  }
+                }
+              }
+              ... on InfraInterfaceL3 {
+                ip_addresses {
+                  edges {
+                    node {
+                      ip_prefix {
+                        node {
+                          broadcast_address {
+                            value
+                          }
+                        }
+                      }
+                      address {
+                        value
+                        ip
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  InfraVRF {
+    edges {
+      node {
+        id
+        name {
+          value
+        }
+        vrf_rd {
+          value
+        }
+        import_rt {
+          node {
+            name {
+              value
+            }
+          }
+        }
+        export_rt {
+          node {
+            name {
+              value
+            }
+          }
+        }
+      }
+    }
+  }
+}

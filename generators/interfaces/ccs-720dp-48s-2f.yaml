@@ -1,0 +1,23 @@
+---
+interfaces:
+  - name: FastEthernet0/
+    from: "0"
+    to: "47"
+    speed: 1000
+    role:
+      - server
+      - uplink
+  - name: GigabitEthernet0/
+    from: "0"
+    to: "7"
+    speed: 10000
+    role:
+      - spine
+      - uplink
+  - name: mgmt
+    speed: 1000
+    role: management
+  - name: loopback0
+    role: loopback
+  - name: loopback1
+    role: vtep
