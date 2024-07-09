@@ -13,6 +13,7 @@ ACCOUNTS = (
     ("pop-builder", "Script", "Password123", "read-write"),
     ("generator", "Script", "Password123", "read-write"),
     ("CRM Synchronization", "Script", "Password123", "read-write"),
+    ("Tomek Zajac", "User", "Password123", "read-write"),
     ("Some User1", "User", "Password123", "read-only"),
     ("Some User2", "User", "Password123", "read-write"),
     ("Some User3", "User", "Password123", "read-write"),
@@ -44,6 +45,7 @@ ORGANIZATIONS = (
     ("Telecom Italia Sparkle", "provider"),
     ("AT&T Services", "provider"),
     ("Technology Partner", "provider"),
+    ("OE1", "customer"),
     ("ABC", "customer"),
     ("CDE", "customer"),
     ("Juniper", "manufacturer"),
@@ -170,6 +172,7 @@ GROUPS = (
     ("upstream_interfaces", "Upstream Interface"),
     ("core_interfaces", "Core Interface"),
     ("all_topologies", "All Topologies"),
+    ("provisioning_circuits", "Provisioning Circuits"),
 )
 
 BGP_PEER_GROUPS = (
@@ -185,6 +188,15 @@ BGP_PEER_GROUPS = (
         "AS1299",
     ),
     ("IX_DEFAULT", "IMPORT_IX", "EXPORT_PUBLIC_PREFIX", "AS65000", None),
+)
+
+NETWORK_STRATEGY = (
+    # Underlay, Overlay, Stategy Type (name and description will be auto-generated)
+    ("ebgp-ebgp", "ebgp", "ebgp", "evpn"),
+    ("ospf-ebgp", "ospf", "ebgp", "evpn"),
+    ("isis-ebgp", "isis", "ebgp", "evpn"),
+    ("ospf-ibgp", "ospf", "ibgp", "evpn"),
+    ("isis-ibgp", "isis", "ibgp", "evpn"),
 )
 
 store = NodeStore()
@@ -546,6 +558,42 @@ async def create_basics(client: InfrahubClient, log: logging.Logger, branch: str
         log.info(f"- Created {node._schema.kind} - {getattr(node, accessor).value}")
 
 
+async def create_topology_strategies(
+    client: InfrahubClient, log: logging.Logger, branch: str
+):
+    log.info("Creating Network Strategies")
+    # Create Network Strategies
+    account = store.get(key="pop-builder", kind="CoreAccount")
+    batch = await client.create_batch()
+    for strategy in NETWORK_STRATEGY:
+        name = strategy[0]
+        underlay = strategy[1]
+        overlay = strategy[2]
+        strategy_type = strategy[3]
+        description = (
+            f"Using {underlay.upper()} as underlay with {overlay.upper()} as overlay"
+        )
+        data = {
+            "name": {"value": name, "source": account.id},
+            "description": {"value": description, "source": account.id},
+            "underlay": {"value": underlay, "source": account.id},
+            "overlay": {"value": overlay, "source": account.id},
+        }
+        await create_and_add_to_batch(
+            client=client,
+            log=log,
+            branch=branch,
+            object_name=name,
+            kind_name=f"Topology{strategy_type.upper()}Strategy",
+            data=data,
+            store=store,
+            batch=batch,
+        )
+    async for node, _ in batch.execute():
+        accessor = f"{node._schema.default_filter.split('__')[0]}"
+        log.info(f"- Created {node._schema.kind} - {getattr(node, accessor).value}")
+
+
 # ---------------------------------------------------------------
 # Use the `infrahubctl run` command line to execute this script
 #
@@ -556,3 +604,4 @@ async def run(
     client: InfrahubClient, log: logging.Logger, branch: str, **kwargs
 ) -> None:
     await create_basics(client=client, log=log, branch=branch)
+    await create_topology_strategies(client=client, branch=branch, log=log)
